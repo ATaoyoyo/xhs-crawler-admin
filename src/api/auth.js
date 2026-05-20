@@ -7,3 +7,7 @@ export const login = (data) => {
 export const getCurrentUser = () => {
   return request.get('/admin/auth/current')
 }
+
+export const logout = () => {
+  return request.post('/admin/auth/logout')
+}

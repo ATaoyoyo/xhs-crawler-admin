@@ -69,7 +69,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
-import { getDashboardStats, getDownloadTrend, getHotTags } from '@/api/dashboard'
+import { getDashboardStats } from '@/api/dashboard'
 
 const stats = ref({
   totalPosts: 0,

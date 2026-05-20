@@ -51,6 +51,7 @@ import { useRouter } from 'vue-router'
 import { Fold, Expand, DataAnalysis, Document, User } from '@element-plus/icons-vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { logout as logoutApi } from '@/api/auth'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -63,7 +64,12 @@ const toggleSidebar = () => {
   appStore.toggleSidebar()
 }
 
-const handleLogout = () => {
+const handleLogout = async () => {
+  try {
+    await logoutApi()
+  } catch (e) {
+    // ignore error
+  }
   authStore.logout()
   ElMessage.success('已退出登录')
   router.push('/login')

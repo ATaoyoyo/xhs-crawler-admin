@@ -55,9 +55,9 @@ const loadUsers = async () => {
   try {
     const res = await getUserList({
       page: pagination.page,
-      page_size: pagination.pageSize
+      pageSize: pagination.pageSize
     })
-    userList.value = res.data.list
+    userList.value = res.data.items
     pagination.total = res.data.total
   } catch (e) {
     // handle error
