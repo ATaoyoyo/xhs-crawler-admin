@@ -26,12 +26,12 @@
       <el-table :data="postList" border stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="title" label="标题" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="author" label="作者" width="120" />
-        <el-table-column prop="likes" label="点赞数" width="100" sortable />
-        <el-table-column prop="collects" label="收藏数" width="100" sortable />
-        <el-table-column prop="comments" label="评论数" width="100" sortable />
-        <el-table-column prop="created_at" label="发布时间" width="180" />
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column prop="authorName" label="作者" width="120" />
+        <el-table-column prop="likedCount" label="点赞数" width="100" sortable />
+        <el-table-column prop="collectedCount" label="收藏数" width="100" sortable />
+        <el-table-column prop="ip" label="IP属地" width="100" />
+        <el-table-column prop="downloadTime" label="下载时间" width="180" />
+        <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
             <el-button type="text" size="small" @click="handleView(row)">查看</el-button>
             <el-button type="text" size="small" danger @click="handleDelete(row)">删除</el-button>
@@ -51,30 +51,29 @@
         />
       </div>
     </el-card>
-
-    <el-dialog v-model="detailVisible" title="笔记详情" width="600px">
-      <div v-if="currentPost" class="post-detail">
-        <p><strong>标题：</strong>{{ currentPost.title }}</p>
-        <p><strong>作者：</strong>{{ currentPost.author }}</p>
-        <p><strong>点赞：</strong>{{ currentPost.likes }}</p>
-        <p><strong>收藏：</strong>{{ currentPost.collects }}</p>
-        <p><strong>评论：</strong>{{ currentPost.comments }}</p>
-        <p><strong>发布时间：</strong>{{ currentPost.created_at }}</p>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getPostList, deletePost } from '@/api/posts'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const router = useRouter()
+
+const formatDate = (date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 const searchKeyword = ref('')
 const dateRange = ref(null)
 const postList = ref([])
-const detailVisible = ref(false)
-const currentPost = ref(null)
 const pagination = reactive({
   page: 1,
   pageSize: 10,
@@ -85,15 +84,15 @@ const loadPosts = async () => {
   try {
     const params = {
       page: pagination.page,
-      page_size: pagination.pageSize,
+      pageSize: pagination.pageSize,
       keyword: searchKeyword.value || undefined
     }
     if (dateRange.value?.length === 2) {
-      params.start_date = dateRange.value[0]
-      params.end_date = dateRange.value[1]
+      params.startDate = formatDate(dateRange.value[0])
+      params.endDate = formatDate(dateRange.value[1])
     }
     const res = await getPostList(params)
-    postList.value = res.data.list
+    postList.value = res.data.items
     pagination.total = res.data.total
   } catch (e) {
     // handle error
@@ -106,8 +105,7 @@ const handleSearch = () => {
 }
 
 const handleView = (row) => {
-  currentPost.value = row
-  detailVisible.value = true
+  router.push(`/posts/${row.postId}`)
 }
 
 const handleDelete = async (row) => {
@@ -115,7 +113,7 @@ const handleDelete = async (row) => {
     await ElMessageBox.confirm('确定删除该笔记吗？', '提示', {
       type: 'warning'
     })
-    await deletePost(row.id)
+    await deletePost(row.postId)
     ElMessage.success('删除成功')
     loadPosts()
   } catch (e) {
@@ -137,8 +135,5 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
-}
-.post-detail p {
-  margin: 10px 0;
 }
 </style>
