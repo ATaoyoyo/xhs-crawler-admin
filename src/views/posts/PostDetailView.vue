@@ -11,7 +11,7 @@
         <el-descriptions :column="2" border>
           <el-descriptions-item label="笔记ID">{{ post.postId }}</el-descriptions-item>
           <el-descriptions-item label="标题">{{ post.title }}</el-descriptions-item>
-          <el-descriptions-item label="作者ID">{{ post.authorId }}</el-descriptions-item>
+          <el-descriptions-item label="作者">{{ post.authorName || post.authorId }}</el-descriptions-item>
           <el-descriptions-item label="分类">{{ post.category || '未分类' }}</el-descriptions-item>
           <el-descriptions-item label="IP属地">{{ post.ip }}</el-descriptions-item>
           <el-descriptions-item label="下载时间">{{ post.createdAt }}</el-descriptions-item>
@@ -30,25 +30,38 @@
           </div>
         </div>
 
-        <div v-if="mediaList.length" class="media-section">
-          <h4>图片/视频</h4>
-          <el-carousel :interval="4000" type="card" height="300px">
-            <el-carousel-item v-for="(item, index) in mediaList" :key="index">
-              <el-image
-                v-if="item.type === 'image'"
-                :src="item.url"
-                fit="contain"
-                :preview-src-list="mediaList.filter(m => m.type === 'image').map(m => m.url)"
-                style="width: 100%; height: 100%"
-              />
-              <video
-                v-else-if="item.type === 'video'"
-                :src="item.url"
-                controls
-                style="width: 100%; height: 100%"
-              />
-            </el-carousel-item>
-          </el-carousel>
+        <div v-if="post.tags && post.tags.length" class="tags-section">
+          <h4>标签</h4>
+          <el-tag v-for="tag in post.tags" :key="tag.tagId" style="margin-right: 8px">{{ tag.tagName }}</el-tag>
+        </div>
+
+        <div v-if="imageList.length" class="media-section">
+          <h4>图片</h4>
+          <div class="media-grid">
+            <el-image
+              v-for="(url, index) in imageList"
+              :key="index"
+              :src="url"
+              fit="cover"
+              :preview-src-list="imageList"
+              class="media-item"
+              style="width: 120px; height: 120px"
+            />
+          </div>
+        </div>
+
+        <div v-if="videoList.length" class="media-section">
+          <h4>视频</h4>
+          <div class="media-grid">
+            <video
+              v-for="(url, index) in videoList"
+              :key="index"
+              :src="url"
+              controls
+              class="media-item"
+              style="width: 120px; height: 120px"
+            />
+          </div>
         </div>
 
         <div class="share-section">
@@ -72,7 +85,26 @@ const router = useRouter()
 const route = useRoute()
 const loading = ref(true)
 const post = ref(null)
-const mediaList = ref([])
+const imageList = ref([])
+const videoList = ref([])
+
+const MEDIA_BASE_URL = 'https://www.shupapa.top/media'
+
+const getMediaUrl = (originalUrl, postId, dateStr, type) => {
+  const filename = originalUrl.split('/').pop()
+  let cleanFilename = filename
+  if (type === 'images') {
+    cleanFilename = filename.split('!')[0] + '.webp'
+  } else if (type === 'videos') {
+    cleanFilename = filename.split('?sign')[0]
+  }
+  return `${MEDIA_BASE_URL}/${dateStr}/${postId}/${type}/${cleanFilename}`
+}
+
+const formatDateForPath = (dateStr) => {
+  if (!dateStr) return ''
+  return dateStr.split(' ')[0].replace(/-/g, '')
+}
 
 const loadDetail = async () => {
   const postId = route.params.id
@@ -86,7 +118,18 @@ const loadDetail = async () => {
     const res = await getPostDetail(postId)
     post.value = res.data
     const media = res.data.media
-    mediaList.value = media ? (Array.isArray(media) ? media : [media]) : []
+    const dateStr = formatDateForPath(res.data.createdAt)
+    if (media) {
+      imageList.value = (media.postImages || []).map(url =>
+        getMediaUrl(url, postId, dateStr, 'images')
+      )
+      videoList.value = (media.postVideos || []).map(url =>
+        getMediaUrl(url, postId, dateStr, 'videos')
+      )
+    } else {
+      imageList.value = []
+      videoList.value = []
+    }
   } catch (e) {
     ElMessage.error('加载失败')
   } finally {
@@ -122,6 +165,7 @@ onMounted(() => {
 }
 .content-section h4,
 .interact-section h4,
+.tags-section h4,
 .media-section h4,
 .share-section h4 {
   margin-bottom: 12px;
@@ -135,5 +179,15 @@ onMounted(() => {
 .interact-stats {
   display: flex;
   gap: 40px;
+}
+.media-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.media-item {
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
 }
 </style>
