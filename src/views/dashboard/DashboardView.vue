@@ -85,26 +85,16 @@ const trendChartRef = ref(null)
 const loadStats = async () => {
   try {
     const res = await getDashboardStats()
-    stats.value = res.data
-  } catch (e) {
-    // handle error
-  }
-}
-
-const loadTrend = async () => {
-  try {
-    const res = await getDownloadTrend(7)
-    trendData.value = res.data
+    const data = res.data
+    stats.value = {
+      totalPosts: data.totalPosts,
+      totalUsers: data.totalUsers,
+      todayDownloads: data.todayDownloads,
+      monthDownloads: data.monthDownloads
+    }
+    trendData.value = data.trendData || []
+    hotTags.value = data.topTags || []
     initTrendChart()
-  } catch (e) {
-    // handle error
-  }
-}
-
-const loadHotTags = async () => {
-  try {
-    const res = await getHotTags(10)
-    hotTags.value = res.data
   } catch (e) {
     // handle error
   }
@@ -132,8 +122,6 @@ const initTrendChart = () => {
 
 onMounted(() => {
   loadStats()
-  loadTrend()
-  loadHotTags()
   window.addEventListener('resize', () => trendChart?.resize())
 })
 
