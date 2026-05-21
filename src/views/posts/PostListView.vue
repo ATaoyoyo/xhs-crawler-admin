@@ -15,6 +15,12 @@
             style="width: 200px; margin-right: 10px"
             clearable
           />
+          <el-input
+            v-model="searchTag"
+            placeholder="搜索标签"
+            style="width: 150px; margin-right: 10px"
+            clearable
+          />
           <el-date-picker
             v-model="dateRange"
             type="daterange"
@@ -92,6 +98,7 @@ const parseDate = (dateStr) => {
 
 const searchKeyword = ref("");
 const searchAuthor = ref("");
+const searchTag = ref("");
 const dateRange = ref(null);
 const postList = ref([]);
 const pagination = reactive({
@@ -104,6 +111,7 @@ const syncStateToUrl = () => {
   const query = {};
   if (searchKeyword.value) query.keyword = searchKeyword.value;
   if (searchAuthor.value) query.author = searchAuthor.value;
+  if (searchTag.value) query.tag = searchTag.value;
   if (dateRange.value?.length === 2) {
     query.startDate = formatDate(dateRange.value[0]);
     query.endDate = formatDate(dateRange.value[1]);
@@ -114,9 +122,10 @@ const syncStateToUrl = () => {
 };
 
 const loadStateFromUrl = () => {
-  const { keyword, author, startDate, endDate, page, pageSize } = route.query;
+  const { keyword, author, tag, startDate, endDate, page, pageSize } = route.query;
   if (keyword) searchKeyword.value = keyword;
   if (author) searchAuthor.value = author;
+  if (tag) searchTag.value = tag;
   if (startDate && endDate) {
     dateRange.value = [parseDate(startDate), parseDate(endDate)];
   }
@@ -131,6 +140,7 @@ const loadPosts = async () => {
       pageSize: pagination.pageSize,
       keyword: searchKeyword.value || undefined,
       author: searchAuthor.value || undefined,
+      tag: searchTag.value || undefined,
     };
     if (dateRange.value?.length === 2) {
       params.startDate = formatDate(dateRange.value[0]);
@@ -153,6 +163,7 @@ const handleSearch = () => {
 const handleReset = () => {
   searchKeyword.value = "";
   searchAuthor.value = "";
+  searchTag.value = "";
   dateRange.value = null;
   handleSearch();
 };
