@@ -5,10 +5,15 @@
         <div class="search-bar">
           <el-input
             v-model="searchKeyword"
-            placeholder="搜索标题/作者"
+            placeholder="搜索标题/笔记ID"
             style="width: 200px; margin-right: 10px"
             clearable
-            @keyup.enter="handleSearch"
+          />
+          <el-input
+            v-model="searchAuthor"
+            placeholder="搜索作者昵称/作者ID"
+            style="width: 200px; margin-right: 10px"
+            clearable
           />
           <el-date-picker
             v-model="dateRange"
@@ -17,9 +22,10 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             style="margin-right: 10px"
-            @change="handleSearch"
+            @change="handleDateChange"
           />
           <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="handleReset">重置</el-button>
         </div>
       </template>
 
@@ -85,6 +91,7 @@ const parseDate = (dateStr) => {
 };
 
 const searchKeyword = ref("");
+const searchAuthor = ref("");
 const dateRange = ref(null);
 const postList = ref([]);
 const pagination = reactive({
@@ -96,6 +103,7 @@ const pagination = reactive({
 const syncStateToUrl = () => {
   const query = {};
   if (searchKeyword.value) query.keyword = searchKeyword.value;
+  if (searchAuthor.value) query.author = searchAuthor.value;
   if (dateRange.value?.length === 2) {
     query.startDate = formatDate(dateRange.value[0]);
     query.endDate = formatDate(dateRange.value[1]);
@@ -106,8 +114,9 @@ const syncStateToUrl = () => {
 };
 
 const loadStateFromUrl = () => {
-  const { keyword, startDate, endDate, page, pageSize } = route.query;
+  const { keyword, author, startDate, endDate, page, pageSize } = route.query;
   if (keyword) searchKeyword.value = keyword;
+  if (author) searchAuthor.value = author;
   if (startDate && endDate) {
     dateRange.value = [parseDate(startDate), parseDate(endDate)];
   }
@@ -121,6 +130,7 @@ const loadPosts = async () => {
       page: pagination.page,
       pageSize: pagination.pageSize,
       keyword: searchKeyword.value || undefined,
+      author: searchAuthor.value || undefined,
     };
     if (dateRange.value?.length === 2) {
       params.startDate = formatDate(dateRange.value[0]);
@@ -138,6 +148,17 @@ const handleSearch = () => {
   pagination.page = 1;
   loadPosts();
   syncStateToUrl();
+};
+
+const handleReset = () => {
+  searchKeyword.value = "";
+  searchAuthor.value = "";
+  dateRange.value = null;
+  handleSearch();
+};
+
+const handleDateChange = () => {
+  handleSearch();
 };
 
 const handleView = (row) => {
