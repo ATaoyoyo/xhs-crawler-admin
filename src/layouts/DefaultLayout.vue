@@ -2,8 +2,8 @@
   <el-container class="default-layout">
     <el-aside :width="collapsed ? '64px' : '200px'">
       <div class="logo">
-        <span v-if="!collapsed">小红书管理</span>
-        <span v-else>管理</span>
+        <img src="@/assets/images/logo.png" alt="logo" class="logo-img" />
+        <span v-if="!collapsed" class="logo-text">薯爬爬管理系统</span>
       </div>
       <el-menu
         :default-active="$route.path"
@@ -86,11 +86,24 @@ const handleLogout = async () => {
 }
 .logo {
   height: 60px;
-  line-height: 60px;
-  text-align: center;
-  color: #fff;
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   background: var(--sidebar-active);
+}
+.logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.logo-text {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 .el-menu {
   border: none;
