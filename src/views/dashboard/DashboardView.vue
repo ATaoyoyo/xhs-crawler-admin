@@ -50,15 +50,17 @@
             <span>热门标签TOP10</span>
           </template>
           <div class="tag-list">
-            <div
-              v-for="(tag, index) in hotTags"
-              :key="index"
-              class="tag-item"
-            >
-              <span class="tag-rank">{{ index + 1 }}</span>
-              <span class="tag-name">{{ tag.name }}</span>
-              <span class="tag-count">{{ tag.count }}</span>
-            </div>
+            <el-scrollbar>
+              <div
+                v-for="(tag, index) in hotTags"
+                :key="index"
+                class="tag-item"
+              >
+                <span class="tag-rank">{{ index + 1 }}</span>
+                <span class="tag-name">{{ tag.name }}</span>
+                <span class="tag-count">{{ tag.count }}</span>
+              </div>
+            </el-scrollbar>
           </div>
         </el-card>
       </el-col>
@@ -67,67 +69,69 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-import { getDashboardStats } from '@/api/dashboard'
+import { ref, onMounted, onUnmounted } from "vue";
+import * as echarts from "echarts";
+import { getDashboardStats } from "@/api/dashboard";
 
 const stats = ref({
   totalPosts: 0,
   totalUsers: 0,
   todayDownloads: 0,
-  monthDownloads: 0
-})
-const trendData = ref([])
-const hotTags = ref([])
-let trendChart = null
-const trendChartRef = ref(null)
+  monthDownloads: 0,
+});
+const trendData = ref([]);
+const hotTags = ref([]);
+let trendChart = null;
+const trendChartRef = ref(null);
 
 const loadStats = async () => {
   try {
-    const res = await getDashboardStats()
-    const data = res.data
+    const res = await getDashboardStats();
+    const data = res.data;
     stats.value = {
       totalPosts: data.totalPosts,
       totalUsers: data.totalUsers,
       todayDownloads: data.todayDownloads,
-      monthDownloads: data.monthDownloads
-    }
-    trendData.value = data.trendData || []
-    hotTags.value = data.topTags || []
-    initTrendChart()
+      monthDownloads: data.monthDownloads,
+    };
+    trendData.value = data.trendData || [];
+    hotTags.value = data.topTags || [];
+    initTrendChart();
   } catch (e) {
     // handle error
   }
-}
+};
 
 const initTrendChart = () => {
-  if (!trendChartRef.value) return
-  trendChart = echarts.init(trendChartRef.value)
+  if (!trendChartRef.value) return;
+  trendChart = echarts.init(trendChartRef.value);
   const option = {
-    tooltip: { trigger: 'axis' },
+    tooltip: { trigger: "axis" },
     xAxis: {
-      type: 'category',
-      data: trendData.value.map(item => item.date)
+      type: "category",
+      data: trendData.value.map((item) => item.date),
     },
-    yAxis: { type: 'value' },
-    series: [{
-      data: trendData.value.map(item => item.count),
-      type: 'line',
-      smooth: true,
-      areaStyle: { opacity: 0.3 }
-    }]
-  }
-  trendChart.setOption(option)
-}
+    yAxis: { type: "value" },
+    series: [
+      {
+        data: trendData.value.map((item) => item.count),
+        type: "line",
+        smooth: true,
+        areaStyle: { opacity: 0.3 },
+      },
+    ],
+  };
+  trendChart.setOption(option);
+};
 
 onMounted(() => {
-  loadStats()
-  window.addEventListener('resize', () => trendChart?.resize())
-})
+  loadStats();
+  window.addEventListener("resize", () => trendChart?.resize());
+});
 
 onUnmounted(() => {
-  trendChart?.dispose()
-})
+  trendChart?.dispose();
+});
 </script>
 
 <style scoped>
@@ -141,41 +145,40 @@ onUnmounted(() => {
 .stat-value {
   font-size: 32px;
   font-weight: bold;
-  color: #409eff;
+  color: var(--xhs-primary);
 }
 .stat-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-regular);
   margin-top: 10px;
 }
 .charts-row {
   margin-bottom: 20px;
 }
 .tag-list {
-  max-height: 300px;
-  overflow-y: auto;
+  height: 300px;
 }
 .tag-item {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-light);
 }
 .tag-rank {
   width: 24px;
   height: 24px;
   line-height: 24px;
   text-align: center;
-  background: #409eff;
+  background: var(--xhs-primary);
   color: #fff;
   border-radius: 50%;
   margin-right: 12px;
 }
 .tag-name {
   flex: 1;
-  color: #333;
+  color: var(--text-primary);
 }
 .tag-count {
-  color: #999;
+  color: var(--text-secondary);
 }
 </style>

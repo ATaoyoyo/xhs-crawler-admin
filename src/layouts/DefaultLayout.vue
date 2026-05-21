@@ -81,7 +81,7 @@ const handleLogout = async () => {
   height: 100vh;
 }
 .el-aside {
-  background: #304156;
+  background: var(--sidebar-bg);
   transition: width 0.3s;
 }
 .logo {
@@ -90,26 +90,26 @@ const handleLogout = async () => {
   text-align: center;
   color: #fff;
   font-size: 18px;
-  background: #2b3a4a;
+  background: var(--sidebar-active);
 }
 .el-menu {
   border: none;
-  background: #304156;
+  background: var(--sidebar-bg);
 }
 .el-menu-item {
-  color: #bfcbd9;
+  color: var(--sidebar-text);
 }
 .el-menu-item:hover,
 .el-menu-item.is-active {
-  background: #263445 !important;
-  color: #409eff;
+  background: var(--sidebar-hover) !important;
+  color: var(--sidebar-text-active);
 }
 .el-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  background: var(--bg-header);
+  box-shadow: var(--shadow-sm);
 }
 .collapse-btn {
   font-size: 20px;
@@ -121,10 +121,10 @@ const handleLogout = async () => {
   gap: 16px;
 }
 .username {
-  color: #666;
+  color: var(--text-regular);
 }
 .el-main {
-  background: #f0f2f5;
+  background: var(--bg-page);
   padding: 20px;
 }
 </style>

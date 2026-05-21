@@ -75,16 +75,19 @@ const handleLogin = async () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-page);
 }
 .login-card {
   width: 400px;
   padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-card);
 }
 .title {
   text-align: center;
   margin-bottom: 30px;
-  color: #333;
+  color: var(--text-primary);
 }
 .login-btn {
   width: 100%;

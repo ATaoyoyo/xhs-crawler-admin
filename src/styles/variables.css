@@ -1,0 +1,50 @@
+/* xhs_admin Design Tokens */
+/* 实用主义 + 小红书品牌元素点缀 */
+
+:root {
+  /* 品牌主色 - 小红书红/粉色系 */
+  --xhs-primary: #fe2c55;
+  --xhs-primary-light: #ff6b8a;
+  --xhs-primary-lighter: #fff0f3;
+
+  /* Element Plus 主题覆盖 */
+  --el-color-primary: var(--xhs-primary);
+  --el-color-primary-light-3: #ff6b8a;
+  --el-color-primary-light-5: #ff8fa3;
+  --el-color-primary-light-7: #ffb3c1;
+  --el-color-primary-light-8: #ffc9d3;
+  --el-color-primary-light-9: #ffe0e6;
+  --el-color-primary-dark-2: #e02548;
+
+  /* 侧边栏 - 深蓝黑系 */
+  --sidebar-bg: #1a1a2e;
+  --sidebar-hover: #252542;
+  --sidebar-active: #323054;
+  --sidebar-text: #a0a0b8;
+  --sidebar-text-active: #fff;
+
+  /* 背景与卡片 */
+  --bg-page: #f5f6f8;
+  --bg-card: #fff;
+  --bg-header: #fff;
+
+  /* 文字层次 */
+  --text-primary: #1f1f2e;
+  --text-regular: #4a4a5e;
+  --text-secondary: #76768a;
+  --text-placeholder: #a0a0b8;
+
+  /* 边框与分隔 */
+  --border-color: #e8e8ed;
+  --border-light: #f0f0f3;
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
