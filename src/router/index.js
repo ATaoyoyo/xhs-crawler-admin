@@ -36,6 +36,11 @@ const routes = [
         path: 'users',
         name: 'Users',
         component: () => import('@/views/users/UserListView.vue')
+      },
+      {
+        path: 'admin-accounts',
+        name: 'AdminAccounts',
+        component: () => import('@/views/users/AdminAccountView.vue')
       }
     ]
   }

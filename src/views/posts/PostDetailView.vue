@@ -21,36 +21,68 @@
     <!-- Main Content -->
     <div v-else class="detail-grid">
       <!-- Primary Info Card -->
-      <el-descriptions :column="3" border>
-        <el-descriptions-item label="标题" :span="3">
-          {{ post.title }}
-          <el-tag size="small" :type="post.category ? '' : 'info'" style="margin-left: 8px">
-            {{ post.category || "未分类" }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="笔记ID">{{ post.postId }}</el-descriptions-item>
-        <el-descriptions-item label="作者">{{ post.authorName || post.authorId }}</el-descriptions-item>
-        <el-descriptions-item label="IP属地">{{ post.ip || "—" }}</el-descriptions-item>
-        <el-descriptions-item label="下载时间">{{ post.createdAt }}</el-descriptions-item>
-        <el-descriptions-item label="点赞">{{ formatNumber(post.likedCount) }}</el-descriptions-item>
-        <el-descriptions-item label="收藏">{{ formatNumber(post.collectedCount) }}</el-descriptions-item>
-      </el-descriptions>
+      <el-card class="info-card" shadow="never">
+        <div class="info-header">
+          <div class="info-title-row">
+            <h2 class="info-title">{{ post.title }}</h2>
+            <el-tag size="small" :type="post.category ? 'success' : 'info'">
+              {{ post.category || "未分类" }}
+            </el-tag>
+          </div>
+          <p class="info-meta">
+            <span class="meta-item">
+              <el-icon><User /></el-icon>
+              {{ post.authorName || post.authorId }}
+            </span>
+            <span class="meta-item" v-if="post.ip">
+              <el-icon><Location /></el-icon>
+              {{ post.ip }}
+            </span>
+            <span class="meta-item">
+              <el-icon><Clock /></el-icon>
+              {{ post.createdAt }}
+            </span>
+          </p>
+        </div>
+        <div class="info-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ formatNumber(post.likedCount) }}</span>
+            <span class="stat-label">点赞</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ formatNumber(post.collectedCount) }}</span>
+            <span class="stat-label">收藏</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value text-mono">{{ post.postId }}</span>
+            <span class="stat-label">笔记ID</span>
+          </div>
+        </div>
+      </el-card>
 
       <!-- Content Card -->
-      <el-card>
-        <template #header>正文内容</template>
+      <el-card class="content-card" shadow="never">
+        <template #header>
+          <span class="card-title">正文内容</span>
+        </template>
         <p class="content-text">{{ post.content }}</p>
       </el-card>
 
       <!-- Tags Card -->
-      <el-card v-if="post.tags?.length" header="标签">
+      <el-card v-if="post.tags?.length" class="tags-card" shadow="never">
+        <template #header>
+          <span class="card-title">标签</span>
+        </template>
         <el-tag v-for="tag in post.tags" :key="tag.tagId" style="margin-right: 8px; margin-bottom: 8px">
           {{ tag.tagName }}
         </el-tag>
       </el-card>
 
       <!-- Images Card -->
-      <el-card v-if="imageList.length" header="图片">
+      <el-card v-if="imageList.length" class="images-card" shadow="never">
+        <template #header>
+          <span class="card-title">图片 ({{ imageList.length }})</span>
+        </template>
         <el-image
           v-for="(url, index) in imageList"
           :key="index"
@@ -63,7 +95,10 @@
       </el-card>
 
       <!-- Video Card -->
-      <el-card v-if="videoList.length" header="视频">
+      <el-card v-if="videoList.length" class="video-card" shadow="never">
+        <template #header>
+          <span class="card-title">视频 ({{ videoList.length }})</span>
+        </template>
         <div class="video-list">
           <video
             v-for="(url, index) in videoList"
@@ -76,7 +111,10 @@
       </el-card>
 
       <!-- Share Link Card -->
-      <el-card header="分享链接">
+      <el-card class="share-card" shadow="never">
+        <template #header>
+          <span class="card-title">分享链接</span>
+        </template>
         <el-link :href="post.shareUrl" target="_blank" type="primary">
           {{ post.shareUrl }}
           <el-icon style="margin-left: 4px"><Link /></el-icon>
@@ -91,7 +129,7 @@ import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getPostDetail, deletePost } from "@/api/posts";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Link } from "@element-plus/icons-vue";
+import { Link, User, Location, Clock } from "@element-plus/icons-vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -173,7 +211,7 @@ onMounted(() => {
 
 <style scoped>
 .post-detail-view {
-  background: #fafafa;
+  background: var(--gray-50);
   padding: 24px;
 }
 
@@ -184,30 +222,109 @@ onMounted(() => {
   margin-top: 24px;
 }
 
+/* Info Card */
+.info-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+.info-header {
+  margin-bottom: var(--space-6);
+}
+.info-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.info-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--gray-900);
+  letter-spacing: -0.42px;
+}
+.info-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+}
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+.info-stats {
+  display: flex;
+  gap: var(--space-8);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-light);
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.stat-value {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--gray-900);
+}
+.stat-value.text-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.stat-label {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+}
+
+/* Content Card */
+.content-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+.card-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--gray-800);
+}
 .content-text {
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.8;
-  color: #525252;
+  color: var(--gray-600);
   white-space: pre-wrap;
   margin: 0;
 }
 
+/* Tags Card */
+.tags-card,
+.images-card,
+.video-card,
+.share-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+/* Images */
 .media-item {
   width: 120px;
   height: 120px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
+/* Video */
 .video-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
 }
-
 .video-item {
   max-height: 200px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   object-fit: contain;
-  background: #171717;
+  background: var(--gray-900);
 }
 </style>
