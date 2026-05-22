@@ -1,74 +1,96 @@
 <template>
   <div class="posts-view">
-    <el-card shadow="hover">
-      <template #header>
-        <div class="search-bar">
+    <!-- Header -->
+    <el-row :gutter="20" align="middle" class="page-header">
+      <el-col :span="12">
+        <h1 class="page-title">笔记管理</h1>
+      </el-col>
+      <el-col :span="12" class="text-right">
+        <el-statistic title="总记录数" :value="pagination.total" />
+      </el-col>
+    </el-row>
+
+    <!-- Filter Card -->
+    <el-card class="filter-card" shadow="never">
+      <el-form :inline="true">
+        <el-form-item label="关键词">
           <el-input
             v-model="searchKeyword"
-            placeholder="搜索标题/笔记ID"
-            style="width: 200px; margin-right: 10px"
+            placeholder="标题 / 笔记ID"
             clearable
           />
+        </el-form-item>
+        <el-form-item label="作者">
           <el-input
             v-model="searchAuthor"
-            placeholder="搜索作者昵称/作者ID"
-            style="width: 200px; margin-right: 10px"
+            placeholder="昵称 / 作者ID"
             clearable
           />
-          <el-input
-            v-model="searchTag"
-            placeholder="搜索标签"
-            style="width: 150px; margin-right: 10px"
-            clearable
-          />
+        </el-form-item>
+        <el-form-item label="标签">
+          <el-input v-model="searchTag" placeholder="搜索标签" clearable />
+        </el-form-item>
+        <el-form-item label="时间范围">
           <el-date-picker
             v-model="dateRange"
             type="daterange"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="margin-right: 10px"
-            @change="handleDateChange"
+            start-placeholder="开始"
+            end-placeholder="结束"
           />
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
           <el-button @click="handleReset">重置</el-button>
-        </div>
-      </template>
+        </el-form-item>
+      </el-form>
+    </el-card>
 
-      <el-table :data="postList" border stripe>
-        <el-table-column prop="id" label="ID" width="70" />
-        <el-table-column
-          prop="title"
-          label="标题"
-          min-width="120"
-          show-overflow-tooltip
-        />
+    <!-- Table Card -->
+    <el-card class="table-card" shadow="never">
+      <template #header>
+        <span>笔记列表</span>
+      </template>
+      <el-table :data="postList" v-loading="loading" @row-click="handleView">
+        <el-table-column prop="title" label="标题" show-overflow-tooltip />
         <el-table-column prop="authorName" label="作者" />
-        <el-table-column prop="likedCount" label="点赞数" width="100" />
-        <el-table-column prop="collectedCount" label="收藏数" width="100" />
-        <el-table-column prop="ip" label="IP属地" width="90" />
-        <el-table-column prop="downloadTime" label="下载时间" />
-        <el-table-column label="操作" width="100" fixed="right">
+        <el-table-column prop="likedCount" label="点赞" align="right">
           <template #default="{ row }">
-            <el-button type="primary" link size="small" @click="handleView(row)"
-              >查看</el-button
-            >
-            <!-- <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button> -->
+            {{ formatNumber(row.likedCount) }}
           </template>
         </el-table-column>
+        <el-table-column prop="collectedCount" label="收藏" align="right">
+          <template #default="{ row }">
+            {{ formatNumber(row.collectedCount) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="ip" label="IP属地">
+          <template #default="{ row }">
+            {{ row.ip || "—" }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="downloadTime" label="下载时间" />
+        <el-table-column label="操作" width="80" align="center" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click.stop="handleView(row)"
+              >查看</el-button
+            >
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="暂无数据" />
+        </template>
       </el-table>
-
-      <div class="pagination">
+      <el-row justify="end" class="pagination">
         <el-pagination
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.pageSize"
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next"
-          @size-change="loadPosts"
-          @current-change="loadPosts"
+          background
         />
-      </div>
+      </el-row>
     </el-card>
   </div>
 </template>
@@ -76,24 +98,19 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { getPostList, deletePost } from "@/api/posts";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { getPostList } from "@/api/posts";
+import { ElMessage } from "element-plus";
 
 const router = useRouter();
 const route = useRoute();
 
-const formatDate = (date) => {
-  if (!date) return "";
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+const loading = ref(false);
 
-const parseDate = (dateStr) => {
-  if (!dateStr) return null;
-  return new Date(dateStr);
+const formatNumber = (num) => {
+  if (!num) return "0";
+  if (num >= 10000) return (num / 10000).toFixed(1) + "w";
+  if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+  return String(num);
 };
 
 const searchKeyword = ref("");
@@ -107,33 +124,14 @@ const pagination = reactive({
   total: 0,
 });
 
-const syncStateToUrl = () => {
-  const query = {};
-  if (searchKeyword.value) query.keyword = searchKeyword.value;
-  if (searchAuthor.value) query.author = searchAuthor.value;
-  if (searchTag.value) query.tag = searchTag.value;
-  if (dateRange.value?.length === 2) {
-    query.startDate = formatDate(dateRange.value[0]);
-    query.endDate = formatDate(dateRange.value[1]);
-  }
-  if (pagination.page !== 1) query.page = pagination.page;
-  if (pagination.pageSize !== 10) query.pageSize = pagination.pageSize;
-  router.replace({ query });
-};
-
-const loadStateFromUrl = () => {
-  const { keyword, author, tag, startDate, endDate, page, pageSize } = route.query;
-  if (keyword) searchKeyword.value = keyword;
-  if (author) searchAuthor.value = author;
-  if (tag) searchTag.value = tag;
-  if (startDate && endDate) {
-    dateRange.value = [parseDate(startDate), parseDate(endDate)];
-  }
-  if (page) pagination.page = parseInt(page, 10);
-  if (pageSize) pagination.pageSize = parseInt(pageSize, 10);
+const formatDate = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
 const loadPosts = async () => {
+  loading.value = true;
   try {
     const params = {
       page: pagination.page,
@@ -150,14 +148,15 @@ const loadPosts = async () => {
     postList.value = res.data.items;
     pagination.total = res.data.total;
   } catch (e) {
-    // handle error
+    ElMessage.error("加载数据失败");
+  } finally {
+    loading.value = false;
   }
 };
 
 const handleSearch = () => {
   pagination.page = 1;
   loadPosts();
-  syncStateToUrl();
 };
 
 const handleReset = () => {
@@ -168,48 +167,67 @@ const handleReset = () => {
   handleSearch();
 };
 
-const handleDateChange = () => {
-  handleSearch();
-};
-
 const handleView = (row) => {
-  router.push(`/posts/${row.postId}`);
-};
-
-const handleDelete = async (row) => {
-  try {
-    await ElMessageBox.confirm("确定删除该笔记吗？", "提示", {
-      type: "warning",
-    });
-    await deletePost(row.postId);
-    ElMessage.success("删除成功");
-    loadPosts();
-  } catch (e) {
-    // cancel or error
-  }
+  router.push(`/posts/${row.postId || row.id}`);
 };
 
 onMounted(() => {
-  loadStateFromUrl();
   loadPosts();
 });
 
 watch(
   () => [pagination.page, pagination.pageSize],
   () => {
-    syncStateToUrl();
+    loadPosts();
   },
 );
 </script>
 
 <style scoped>
-.search-bar {
-  display: flex;
-  align-items: center;
+.posts-view {
+  background: #fafafa;
+  padding: 24px;
 }
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #171717;
+  margin: 0;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.filter-card {
+  margin-bottom: 16px;
+}
+
 .pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+  padding: 16px 0 0;
+}
+
+:deep(.el-table) {
+  font-size: 14px;
+}
+
+:deep(.el-table th.el-table__cell) {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #525252;
+  font-weight: 500;
+}
+
+:deep(.el-table td.el-table__cell) {
+  color: #262626;
+}
+
+:deep(.el-table .el-table__row) {
+  cursor: pointer;
 }
 </style>
