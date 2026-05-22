@@ -83,15 +83,17 @@
         <template #header>
           <span class="card-title">图片 ({{ imageList.length }})</span>
         </template>
-        <el-image
-          v-for="(url, index) in imageList"
-          :key="index"
-          :src="url"
-          :initial-index="index"
-          :preview-src-list="imageList"
-          fit="cover"
-          class="media-item"
-        />
+        <div class="image-list">
+          <el-image
+            v-for="(url, index) in imageList"
+            :key="index"
+            :src="url"
+            :initial-index="index"
+            :preview-src-list="imageList"
+            fit="cover"
+            class="media-item"
+          />
+        </div>
       </el-card>
 
       <!-- Video Card -->
@@ -309,6 +311,12 @@ onMounted(() => {
 }
 
 /* Images */
+.image-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
 .media-item {
   width: 120px;
   height: 120px;
