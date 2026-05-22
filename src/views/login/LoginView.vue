@@ -1,13 +1,17 @@
 <template>
   <div class="login-container">
-    <el-card class="login-card">
-      <h2 class="title">小红书笔记管理系统</h2>
-      <el-form ref="formRef" :model="form" :rules="rules">
+    <el-card class="login-card" shadow="never">
+      <div class="login-header">
+        <img :src="logoUrl" alt="薯爬爬" class="logo" />
+        <h1 class="title">薯爬爬管理系统</h1>
+      </div>
+      <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
         <el-form-item prop="username">
           <el-input
             v-model="form.username"
             placeholder="请输入用户名"
             prefix-icon="User"
+            size="large"
           />
         </el-form-item>
         <el-form-item prop="password">
@@ -16,14 +20,16 @@
             type="password"
             placeholder="请输入密码"
             prefix-icon="Lock"
+            size="large"
             @keyup.enter="handleLogin"
           />
         </el-form-item>
         <el-form-item>
           <el-button
-            type="primary"
             :loading="loading"
             class="login-btn"
+            type="primary"
+            size="large"
             @click="handleLogin"
           >
             登录
@@ -39,6 +45,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
+import logoUrl from '@/assets/images/logo.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -74,22 +81,50 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: var(--bg-page);
+  min-height: 100vh;
+  background: var(--gray-50);
 }
+
 .login-card {
   width: 400px;
-  padding: 20px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   background: var(--bg-card);
+  border: 1px solid var(--border-color);
 }
-.title {
+
+.login-header {
   text-align: center;
-  margin-bottom: 30px;
-  color: var(--text-primary);
+  margin-bottom: var(--space-8);
 }
+
+.logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-4);
+  border-radius: 50%;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  color: var(--gray-900);
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: -0.42px;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.login-form {
+  margin-top: var(--space-6);
+}
+
 .login-btn {
   width: 100%;
+  border-radius: var(--radius-sm);
 }
 </style>

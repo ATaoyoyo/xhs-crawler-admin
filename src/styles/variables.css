@@ -1,50 +1,131 @@
-/* xhs_admin Design Tokens */
-/* 实用主义 + 小红书品牌元素点缀 */
+/* xhs_admin Design Tokens - 薯爬爬设计系统 */
+
+/* 借鉴 Saniti 的极简主义、克制配色和清晰层次理念
+   针对后台系统进行了优化
+*/
 
 :root {
-  /* 品牌主色 - 小红书红/粉色系 */
-  --xhs-primary: #fe2c55;
-  --xhs-primary-light: #ff6b8a;
-  --xhs-primary-lighter: #fff0f3;
+  /* ==================== 色彩系统 ==================== */
+
+  /* 主色 - 翡翠绿 */
+  --primary: #3ecf8e;
+  --primary-light: #4ade80;
+  --primary-lighter: #e8faf0;
+  --primary-deep: #24b47e;
 
   /* Element Plus 主题覆盖 */
-  --el-color-primary: var(--xhs-primary);
-  --el-color-primary-light-3: #ff6b8a;
-  --el-color-primary-light-5: #ff8fa3;
-  --el-color-primary-light-7: #ffb3c1;
-  --el-color-primary-light-8: #ffc9d3;
-  --el-color-primary-light-9: #ffe0e6;
-  --el-color-primary-dark-2: #e02548;
+  --el-color-primary: var(--primary);
+  --el-color-primary-light-3: #4ade80;
+  --el-color-primary-light-5: #6ee4a3;
+  --el-color-primary-light-7: #a3ecc2;
+  --el-color-primary-light-8: #c4f2d8;
+  --el-color-primary-light-9: #e0f7ec;
+  --el-color-primary-dark-2: #24b47e;
 
-  /* 侧边栏 - 深蓝黑系 */
-  --sidebar-bg: #1a1a2e;
-  --sidebar-hover: #252542;
-  --sidebar-active: #323054;
+  /* 功能色 */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* 中性色 - Gray Ladder */
+  --gray-50: #fafafa;   /* 页面背景 */
+  --gray-100: #f5f5f5;  /* 卡片背景 */
+  --gray-200: #e5e5e5;  /* 边框 */
+  --gray-300: #d4d4d4;  /* 分割线 */
+  --gray-400: #a3a3a3;  /* 辅助文字 */
+  --gray-500: #737373;  /* 次要文字 */
+  --gray-600: #525252;  /* 正文文字 */
+  --gray-700: #404040;  /* 强调文字 */
+  --gray-800: #262626;  /* 深色文字 */
+  --gray-900: #171717;  /* 标题文字 */
+
+  /* 侧边栏 */
+  --sidebar-bg: #1c1c1c;
+  --sidebar-hover: #252525;
+  --sidebar-active: #252545;
   --sidebar-text: #a0a0b8;
-  --sidebar-text-active: #fff;
+  --sidebar-text-active: #ffffff;
 
-  /* 背景与卡片 */
-  --bg-page: #f5f6f8;
-  --bg-card: #fff;
-  --bg-header: #fff;
+  /* 表面 */
+  --bg-page: var(--gray-50);
+  --bg-card: #ffffff;
+  --bg-header: #ffffff;
 
-  /* 文字层次 */
-  --text-primary: #1f1f2e;
-  --text-regular: #4a4a5e;
-  --text-secondary: #76768a;
-  --text-placeholder: #a0a0b8;
+  /* 文本 - Ink Ladder */
+  --text-primary: var(--gray-900);
+  --text-regular: var(--gray-600);
+  --text-secondary: var(--gray-500);
+  --text-placeholder: var(--gray-400);
+  --text-faint: var(--gray-300);
 
-  /* 边框与分隔 */
-  --border-color: #e8e8ed;
-  --border-light: #f0f0f3;
+  /* 边框 */
+  --border-color: var(--gray-200);
+  --border-light: var(--gray-100);
+  --border-strong: var(--gray-300);
 
-  /* 圆角 */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* ==================== 圆角系统 ==================== */
 
-  /* 阴影 */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --radius-xs: 4px;   /* 输入框、小按钮 */
+  --radius-sm: 6px;   /* 次要按钮、标签 */
+  --radius-md: 8px;   /* 卡片、容器 */
+  --radius-lg: 12px; /* 面板、弹窗 */
+  --radius-xl: 16px;  /* 大型卡片 */
+
+  /* ==================== 间距系统 ==================== */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ==================== 阴影系统 ==================== */
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* ==================== 字体系统 ==================== */
+
+  --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  /* 字号层级 */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 24px;
+
+  /* 行高 */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* 字重 */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+
+  /* ==================== Element Plus 变量 ==================== */
+
+  --el-border-color: var(--gray-200);
+  --el-border-color-light: var(--gray-100);
+  --el-border-radius-base: var(--radius-sm);
+  --el-border-radius-round: var(--radius-xs);
+  --el-font-family: var(--font-sans);
+
+  /* 功能色覆盖 */
+  --el-color-success: var(--success);
+  --el-color-warning: var(--warning);
+  --el-color-danger: var(--error);
+  --el-color-info: var(--info);
 }
